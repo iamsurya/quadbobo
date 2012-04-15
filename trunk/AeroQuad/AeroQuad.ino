@@ -1,4 +1,8 @@
-#include "UserConfiguration.h" // Edit this file first before uploading to the AeroQuad
+#define AeroQuad_v18
+#define quadPlusConfig
+#define RateModeOnly 
+#define LASTCHANNEL 6
+
 
 // Checks to make sure we have the right combinations defined
 #if defined(FlightAngleMARG) && !defined(HeadingMagHold)
