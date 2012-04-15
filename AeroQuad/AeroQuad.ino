@@ -107,24 +107,30 @@ void setup() {
   #ifdef CHANGE_YAW_DIRECTION
     YAW_DIRECTION = -1;
   #endif
-
+/* Remove ****************************************************************************************************************
   // Read user values from EEPROM
   readEEPROM(); // defined in DataStorage.h
   if (readFloat(SOFTWARE_VERSION_ADR) != SOFTWARE_VERSION) { // If we detect the wrong soft version, we init all parameters
     initializeEEPROM();
     writeEEPROM();
   }
+/* Remove ****************************************************************************************************************/
 
   initPlatform();
-
+/* Remove ****************************************************************************************************************
   // Configure motors
   #if defined(quadXConfig) || defined(quadPlusConfig) || defined(quadY4Config) || defined(triConfig)
-     initializeMotors(FOUR_Motors);
+  /* Remove **************************************************************************************************************** */
+       initializeMotors(FOUR_Motors);
+  /* Remove ****************************************************************************************************************
   #elif defined(hexPlusConfig) || defined(hexXConfig) || defined (hexY6Config)
      initializeMotors(SIX_Motors);
   #elif defined (octoX8Config) || defined (octoXConfig) || defined (octoPlusConfig)
      initializeMotors(EIGHT_Motors);
   #endif
+  /* Remove **************************************************************************************************************** */
+  
+  
   // Initialize max/min values for all motors
   for (byte motor = 0; motor < LASTMOTOR; motor++) {
     motorMinCommand[motor] = minArmedThrottle;
@@ -148,13 +154,18 @@ void setup() {
   zeroIntegralError();
 
   // Flight angle estimation
+/* Remove ****************************************************************************************************************
   #ifdef HeadingMagHold
     vehicleState |= HEADINGHOLD_ENABLED;
     initializeMagnetometer();
     initializeKinematics(getHdgXY(XAXIS), getHdgXY(YAXIS));
   #else
+  /* Remove **************************************************************************************************************** */
     initializeKinematics(1.0, 0.0);  // with no compass, DCM matrix initalizes to a heading of 0 degrees
-  #endif
+
+//  #endif
+
+
   // Integral Limit for attitude mode
   // This overrides default set in readEEPROM()
   // Set for 1/2 max attitude command (+/-0.75 radians)
@@ -163,6 +174,7 @@ void setup() {
   PID[ATTITUDE_YAXIS_PID_IDX].windupGuard = 0.375;
   
   // Optional Sensors
+  /* Remove ****************************************************************************************************************
   #ifdef AltitudeHoldBaro
     initializeBaro();
     vehicleState |= ALTITUDEHOLD_ENABLED;
@@ -171,9 +183,10 @@ void setup() {
     inititalizeRangeFinder(ALTITUDE_RANGE_FINDER_INDEX);
     vehicleState |= RANGE_ENABLED;
   #endif
-
+/* Remove **************************************************************************************************************** */
 
   // Battery Monitor
+  /* Remove ****************************************************************************************************************
   #ifdef BattMonitor
     // batteryMonitorAlarmVoltage updated in readEEPROM()
     initializeBatteryMonitor(sizeof(batteryData) / sizeof(struct BatteryData), batteryMonitorAlarmVoltage);
@@ -198,6 +211,7 @@ void setup() {
     initializeSPI();
     initializeOSD();
   #endif
+/* Remove **************************************************************************************************************** */
 
   #if defined(BinaryWrite) || defined(BinaryWritePID)
     #ifdef OpenlogBinaryWrite
@@ -261,7 +275,7 @@ void loop () {
       for (int axis = XAXIS; axis <= ZAXIS; axis++) {
         filteredAccel[axis] = computeFourthOrder(meterPerSecSec[axis], &fourthOrder[axis]);
       }
-      
+      /*
       // ****************** Calculate Absolute Angle *****************
       #if defined FlightAngleNewARG
         calculateKinematics(gyroRate[XAXIS],
@@ -320,21 +334,9 @@ void loop () {
                             0.0,
                             G_Dt);
       #endif
-
+*/
 
       // Evaluate are here because we want it to be synchronized with the processFlightControl
-      #if defined AltitudeHoldBaro
-        measureBaroSum(); 
-        if (frameCounter % THROTTLE_ADJUST_TASK_SPEED == 0) {  //  50 Hz tasks
-          evaluateBaroAltitude();
-        }
-      #endif
-      #ifdef AltitudeHoldRangeFinder
-        readRangeFinderDistanceSum(ALTITUDE_RANGE_FINDER_INDEX);
-        if (frameCounter % THROTTLE_ADJUST_TASK_SPEED == 0) {  //  50 Hz tasks
-          evaluateDistanceFromSample(ALTITUDE_RANGE_FINDER_INDEX);
-        }
-      #endif
             
       // Combines external pilot commands and measured sensor data to generate motor commands
       processFlightControl();
@@ -359,13 +361,6 @@ void loop () {
 
       // Reads external pilot commands and performs functions based on stick configuration
       readPilotCommands(); // defined in FlightCommand.pde
-
-      #if defined(CameraControl)
-        cameraControlSetPitch(kinematicsAngle[YAXIS]);
-        cameraControlSetRoll(kinematicsAngle[XAXIS]);
-        cameraControlSetYaw(kinematicsAngle[ZAXIS]);
-        cameraControlMove();
-      #endif
     }
 
     // ================================================================
@@ -376,30 +371,10 @@ void loop () {
       G_Dt = (currentTime - tenHZpreviousTime) / 1000000.0;
       tenHZpreviousTime = currentTime;
 
-      #if defined(HeadingMagHold)
-        measureMagnetometer(kinematicsAngle[XAXIS], kinematicsAngle[YAXIS]);
-      #endif
-      #if defined(BattMonitor)
-        measureBatteryVoltage(G_Dt);
-      #endif
-
       // Listen for configuration commands and reports telemetry
       readSerialCommand(); // defined in SerialCom.pde
       sendSerialTelemetry(); // defined in SerialCom.pde
-
-      #ifdef OSD_SYSTEM_MENU
-        updateOSDMenu();
-      #endif
-
-      #ifdef MAX7456_OSD
-        updateOSD();
-      #endif
-      
-      #if defined (UseGPS)
-        readGps();
-//        gpsdump();
-      #endif
-    }
+   }
 
     previousTime = currentTime;
   }
