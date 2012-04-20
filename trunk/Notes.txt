@@ -1,0 +1,9 @@
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// In the 3.0 code the motor numbering has changed to simplify motor configuration.
+// Please refer to the .h files in ..\Libraries\AQ_FlightControlProcessor to see the new numbering for your flight model
+// Also check the http://www.aeroquad.com/showwiki.php "Build Instructions" for more detail on the 3.0 motor changes 
+// the OLD_MOTOR_NUMBERING is compatible  with the 2.x versions of the AeroQuad code and will not need re-ordering to work
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+a
